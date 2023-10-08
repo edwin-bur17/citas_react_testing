@@ -1,11 +1,11 @@
 import React from "react"
-import { render, screen, fireEvent} from "@testing-library/react"
+import { render, screen} from "@testing-library/react"
 // render permite montar un componente 
 // cleanup: limpia la memoria para pasar de una prueba a otra
 // fireEvent: para dar click en un botón
 import Formulario from "../components/Formulario.js"
 import '@testing-library/jest-dom/extend-expect.js'
-
+import userEvent from "@testing-library/user-event"
 
 const crearCita = jest.fn() // para buscar la función que se requiere
 
@@ -37,32 +37,40 @@ test('<Formulario/> Validación del formulario', ()=> {
 
     // Click en el botón de enviar
     const btnSubmit = screen.getByTestId('btn-submit') // conectar con el botón mediante el id
-    fireEvent.click(btnSubmit)
+    userEvent.click(btnSubmit)
 
-    // Reenviar por la alerta
+    // Revisar por la alerta
     const alerta = screen.getByTestId('alerta')
     expect(  alerta.textContent).toBeInTheDocument
     expect( alerta.textContent).toBe('Todos los campos son obligatorios')
     expect( alerta.tagName).toBe('P')
 })
 
+// testing crear nueva cita
 test('<Formulario/> Validación del formulario', ()=> {
+    // Activar el formulario
     render(<Formulario 
         crearCita={crearCita}
       />)
 
-     fireEvent.change(screen.getByTestId('mascota'), {
-         target: { value: 'Coco' }
-     })
-
-     fireEvent.change(screen.getByTestId('propietario'), {
-         target: { value: 'carlos' }
-     })
+    // Simular crear una cita nueva, escribir en el formulario
+    userEvent.type(screen.getByTestId('mascota'), 'coco')
+    userEvent.type(screen.getByTestId('propietario'), 'carlos')
+    userEvent.type(screen.getByTestId('fecha'), '2023-10-08')
+    userEvent.type(screen.getByTestId('hora'), '01:04')
+    userEvent.type(screen.getByTestId('sintomas'), 'solo come')
 
     // Click en el botón de enviar
     const btnSubmit = screen.getByTestId('btn-submit') // conectar con el botón mediante el id
-    fireEvent.click(btnSubmit)
+    userEvent.click(btnSubmit)
 
+    // Revisar por la alerta
+    const alerta = screen.queryByTestId('alerta')
+    expect(  alerta ).not.toBeInTheDocument
+
+    // Crear cita y comprobar que la función se haya llamado 
+    expect( crearCita ).toHaveBeenCalled()
+    expect( crearCita ).toHaveBeenCalledTimes(1) // Cantidad de veces que se llama
 })
 
 

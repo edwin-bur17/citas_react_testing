@@ -28,8 +28,6 @@ const Formulario = ({ crearCita }) => {
   const submitCita = (e) => {
     e.preventDefault();
 
-    console.log(cita);
-
     // Validar
     if (
       mascota.trim() === "" ||
