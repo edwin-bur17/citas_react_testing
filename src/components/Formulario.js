@@ -109,6 +109,7 @@ const Formulario = ({crearCita}) => {
                 ></textarea>
 
                 <button
+                data-test-id="btn-submit"
                     type="submit"
                     className="u-full-width button-primary"
                 >Agregar Cita</button>
